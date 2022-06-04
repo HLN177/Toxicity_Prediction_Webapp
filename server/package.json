@@ -6,7 +6,8 @@
   "scripts": {
     "build": "npx tsc",
     "start": "node dist/index.js",
-    "dev": "ts-node-dev --respawn --transpile-only ./index.ts"
+    "dev": "ts-node-dev --respawn --transpile-only ./index.ts",
+    "dev:debug": "ts-node-dev --transpile-only --respawn --inspect=4321 --project tsconfig.json ./index.ts"
   },
   "author": "HLN177",
   "license": "ISC",

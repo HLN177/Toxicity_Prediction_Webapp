@@ -10,8 +10,8 @@ export interface UserDocument extends mongoose.Document {
   name: string;
   password: string;
   // below timestamps: true
-  createdAt: DataTransfer;
-  updatedAt: DataTransfer;
+  createdAt: Date;
+  updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>
 }
 
