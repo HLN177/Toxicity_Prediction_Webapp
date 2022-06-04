@@ -1,5 +1,6 @@
 import { DocumentDefinition } from 'mongoose';
 import UserModel, { UserDocument } from '../models/user.model';
+import { omit } from 'lodash';
 
 export async function createUser(
   // the reason to omit these two properties
@@ -10,8 +11,28 @@ export async function createUser(
   >
 ) {
   try {
-    return await UserModel.create(input);
+    const user = await UserModel.create(input);
+    return omit(user.toJSON(), ["password"]);
   } catch(e: any) {
     throw new Error(e);
   }
 };
+
+export async function validatePassword(
+  {email, password}:{email: string, password: string}
+) {
+  // search user in db
+  const user = await UserModel.findOne({email});
+  // if user doesn't exist, return false
+  if (!user) {
+    return false;
+  }
+  // compare password
+  const isValid = await user.comparePassword(password);
+  // if password doesn't match, return flase
+  if (!isValid) {
+    return false;
+  }
+  // password match, return user
+  return omit(user.toJSON(), ["password"]);
+}

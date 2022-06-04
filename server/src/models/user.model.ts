@@ -71,6 +71,6 @@ userSchema.methods.comparePassword = async function (
 /**
  * Mongoose will refuse to save a document that doesn't have an _id
  */
-const UserModel = mongoose.model('User', userSchema);
+const UserModel = mongoose.model<UserDocument>('User', userSchema);
 
 export default UserModel;
