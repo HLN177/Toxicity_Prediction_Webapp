@@ -1,4 +1,5 @@
 export default {
   port: 3000,
-  dbURI: ''
+  dbURI: '',
+  saltWorkFactor: 10
 };
