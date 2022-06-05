@@ -5,7 +5,7 @@ import config from 'config';
 /**
  * create a typescript definition for user schema
  */
-export interface UserDocument extends mongoose.Document {
+interface UserDocument extends mongoose.Document {
   email: string;
   name: string;
   password: string;
@@ -74,3 +74,7 @@ userSchema.methods.comparePassword = async function (
 const UserModel = mongoose.model<UserDocument>('User', userSchema);
 
 export default UserModel;
+
+export {
+  UserDocument
+};

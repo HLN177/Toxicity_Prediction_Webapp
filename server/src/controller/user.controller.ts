@@ -4,7 +4,7 @@ import { createUser } from "../service/user.service";
 import logger from '../utils/logger';
 
 // tell the request body what it should expect
-export async function createUserHandler(
+async function createUserHandler(
   req: Request<{}, {}, CreateUserInput["body"]>,
   res: Response
 ) {
@@ -17,4 +17,8 @@ export async function createUserHandler(
     logger.error(e);
     return res.status(409).send(e.message);
   }
+};
+
+export {
+  createUserHandler
 };
