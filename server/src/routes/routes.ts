@@ -3,12 +3,10 @@ import validate from '../middleware/validateResource';
 import requireUser from '../middleware/requireUser';
 import { createUserHandler } from '../controller/user.controller';
 import { createUserSchema } from '../schema/user.schema';
-import { 
-  createUserSessionHandler,
-  deleteUserSessionHandler,
-  getUserSessionsHandler 
-} from '../controller/session.controller';
+import { createUserSessionHandler, deleteUserSessionHandler, getUserSessionsHandler } from '../controller/session.controller';
 import { createSessionSchema } from '../schema/session.schema';
+import { createProductHandler, deleteProductHandler, getProductHandler, updateProductHandler } from '../controller/product.controller';
+import { createProductSchema, deleteProductSchema, getProductSchema, updateProductSchema } from '../schema/product.schema';
 
 /**
  * taking http request and forward to controller
@@ -25,6 +23,13 @@ function routes(app: Express) {
   .post([validate(createSessionSchema)], createUserSessionHandler)
   .get([requireUser], getUserSessionsHandler)
   .delete([requireUser], deleteUserSessionHandler);
+
+  app.post('/api/products', [requireUser, validate(createProductSchema)], createProductHandler)
+
+  app.route('/api/products/:productId')
+  .get([validate(getProductSchema)], getProductHandler)
+  .put([requireUser, validate(updateProductSchema), updateProductHandler])
+  .delete([requireUser, validate(deleteProductSchema)], deleteProductHandler);
 }
 
 export default routes;
