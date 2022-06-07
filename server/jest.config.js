@@ -4,6 +4,8 @@ module.exports = {
   testEnvironment: 'node',
   testMatch: ["**/**/*.test.ts"], // tell jest where to find the tests
   verbose: true, // report during the test run
-  forceExit: true // force exit after finish all tests. It is useful to clear the running resources
-  // clearMocks: true
+  forceExit: true, // force exit after finish all tests. It is useful to clear the running resources
+  clearMocks: true,
+  resetMocks: true,
+  restoreMocks: true
 };
