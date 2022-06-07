@@ -9,6 +9,7 @@ const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', 10);
  */
 interface ProductDocument extends mongoose.Document {
   user: UserDocument['_id'];
+  productId: string;
   title: string;
   description: string;
   price: number;

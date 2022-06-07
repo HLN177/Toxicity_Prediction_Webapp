@@ -2,7 +2,7 @@ import { DocumentDefinition, FilterQuery, QueryOptions, UpdateQuery } from "mong
 import ProductModel, { ProductDocument } from "../models/product.model";
 
 async function createProduct(
-  input: DocumentDefinition<Omit<ProductDocument, 'createdAt' | 'updatedAt'>>
+  input: DocumentDefinition<Omit<ProductDocument, 'productId' | 'createdAt' | 'updatedAt'>>
 ) {
   return ProductModel.create(input);
 }
