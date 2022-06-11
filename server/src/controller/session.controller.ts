@@ -22,10 +22,10 @@ async function createUserSessionHandler(
   // 1. validate user's password
   const user =  await validatePassword(req.body);
   if (!user) {
-    return res.status(401).send("Invalid email or password");
+    return res.status(401).send('Invalid email or password');
   }
   // 2. create a sesion
-  const session = await createSession(user._id, req.get("user-agent") || "")
+  const session = await createSession(user._id, req.get('user-agent') || '')
 
   // 3. create an access token
   const accessToken = signJwt(
@@ -38,8 +38,31 @@ async function createUserSessionHandler(
     { ...user, session: session._id },
     { expiresIn: config.get('refreshTokenTtl') } // 1 year
   );
-  // 5. return access & refresh tokens
 
+  res.cookie('accessToken', accessToken, {
+    maxAge: 900000, // 15min
+    /**
+     * httpOnly
+     * this cookie can only be accessed via http, and cannot access this via Javascript 
+     * this is a good security feature that you get with cookies and don't get with local storage
+     */
+    httpOnly: true,
+    domain: 'localhost', // set this in config in production
+    path: '/', //	Path for the cookie
+    sameSite: 'strict',
+    secure: false // Marks the cookie to be used with HTTPS only.
+  });
+
+  res.cookie('refreshToken', refreshToken, {
+    maxAge: 3.154e10, // 1 year
+    httpOnly: true,
+    domain: 'localhost', // set this in config in production
+    path: '/', //	Path for the cookie
+    sameSite: 'strict',
+    secure: false // Marks the cookie to be used with HTTPS only.
+  });
+
+  // 5. return access & refresh tokens
   return res.send({accessToken, refreshToken});
 }
 

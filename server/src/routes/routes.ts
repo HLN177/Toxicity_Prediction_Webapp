@@ -1,7 +1,7 @@
 import { Express, Request, Response } from 'express';
 import validate from '../middleware/validateResource';
 import requireUser from '../middleware/requireUser';
-import { createUserHandler } from '../controller/user.controller';
+import { createUserHandler, getCurrentUser } from '../controller/user.controller';
 import { createUserSchema } from '../schema/user.schema';
 import { createUserSessionHandler, deleteUserSessionHandler, getUserSessionsHandler } from '../controller/session.controller';
 import { createSessionSchema } from '../schema/session.schema';
@@ -15,6 +15,8 @@ function routes(app: Express) {
   app.get('/healthcheck', (req: Request, res: Response) => {
     return res.sendStatus(200);
   });
+
+  app.get('/api/me', [requireUser], getCurrentUser);
 
   // use [ ] to group middleware
   app.post('/api/users', [validate(createUserSchema)], createUserHandler);
