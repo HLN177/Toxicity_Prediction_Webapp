@@ -1,5 +1,4 @@
-import { SignInType } from '../models/signIn.model';
-import { SignUpType } from '../models/signUp.model';
+import { SignInType, SignUpType, TokenResponse } from '../models/auth.models';
 import service from '../utils/service';
 
 const URL = {
@@ -7,8 +6,8 @@ const URL = {
   USERS: '/api/users'
 };
 
-function signIn(data: SignInType) {
-  return service.post(URL.SESSION,data);
+function signIn(data: SignInType): Promise<TokenResponse> {
+  return service.post(URL.SESSION, data);
 }
 
 function signUp(data: SignUpType) {

@@ -2,36 +2,88 @@ import { Request, Response, NextFunction } from "express";
 import { get } from "lodash"; // safer accessing a property that don't know if it exists or not
 import { reIssueAccessToken } from "../service/session.service";
 import { verifyJwt } from "../utils/jwt.utils";
+import { AUTH_MODEL } from "../const/session.const";
+import config from 'config';
 // express middleware is basically a route handler
 // there's essentially no difference between middleware and route handler
 
-/**
- * validate request
- * 1. get access token and refresh token from header or cookies
- * 2. get user info from token, and set to locals
- * 3. check validation of access token and handler reissue new token
- *    and set user info to locals
- * @param req 
- * @param res 
- * @param next 
- */
-async function deserializeUser(
+const TOKEN_AUTH_MODEL = config.get('AuthModel');
+
+function deserializeUser(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  /**
-   * at the start of an authorization token, have the word "bearer"
-   * Bearer means the bearer of this token gets access to the system
-   */
+  switch (TOKEN_AUTH_MODEL) {
+    case AUTH_MODEL['cookies']:
+      deserializeByCookies(req, res, next);
+      break;
+    case AUTH_MODEL['tokens']:
+      deserializeByTokens(req, res, next);
+      break;
+    case AUTH_MODEL['hybird']:
+      deserializeByHybird(req, res, next);
+      break;
+    default:
+      return next();
+  }
+}
+
+
+async function deserializeByCookies(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  // 1. get access token and refresh token from cookie
+  const accessToken = get(req, 'cookies.accessToken');
+  const refreshToken = get(req, 'cookies.refreshToken');
+  // 2. if access token and refresh token both not existed, return;
+  if (!accessToken && !refreshToken) {
+    return next();
+  }
+  // expired accessToken will be deleted by browser
+  if (accessToken) {
+    const {decoded, expired} = verifyJwt(accessToken);
+    // if there is a valid jwt, attach the user to res.locals
+    if (decoded) {
+      res.locals.user = decoded;
+      return next();
+    }
+  } else {
+    const newAccessToken = await reIssueAccessToken({refreshToken});
+    if (newAccessToken) {
+      // set access token to cookies
+      res.cookie('accessToken', newAccessToken, {
+        maxAge: 900000, // 15min
+        httpOnly: true,
+        domain: 'localhost', // set this in config in production
+        path: '/', //	Path for the cookie
+        sameSite: 'strict',
+        secure: false // Marks the cookie to be used with HTTPS only.
+      });
+    }
+    const result = verifyJwt(newAccessToken as string); // handle type warning
+    res.locals.user = result.decoded;
+  }
+
+
+  return next();
+}
+
+async function deserializeByTokens(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   // 1. get access token and refresh token from header or cookie
-  const accessToken = get(req, 'cookies.accessToken') || get(req, 'headers.authorization', '').replace(/^Bearer\s/, '');
-  const refreshToken = get(req, 'cookies.refreshToken') || get(req, 'headers.x-refresh');
-  // if accessToken do not existed, the requireUser function may take over later
+  const accessToken = get(req, 'headers.authorization', '').replace(/^Bearer\s/, '');
+  const refreshToken = get(req, 'headers.x-refresh');
+  // 2. if accessToken do not existed, the requireUser function may take over later
   if (!accessToken) {
     return next();
   }
-  // verify token
+  // 3. if accessToken existed, verify token
   const {decoded, expired} = verifyJwt(accessToken);
   // if there is a valid jwt, attach the user to res.locals
   if (decoded) {
@@ -44,19 +96,10 @@ async function deserializeUser(
     const newAccessToken = await reIssueAccessToken({refreshToken});
     if (newAccessToken) {
       /**
-       * client could access via token or cookie
+       * client could access via token
        */
       // set the new access token on the header of access token
       res.setHeader('x-access-token', newAccessToken);
-      // set access token to cookies
-      res.cookie('accessToken', newAccessToken, {
-        maxAge: 900000, // 15min
-        httpOnly: true,
-        domain: 'localhost', // set this in config in production
-        path: '/', //	Path for the cookie
-        sameSite: 'strict',
-        secure: false // Marks the cookie to be used with HTTPS only.
-      });
     }
     // attach the user back to res.locals
     // because if they send a request with an expired access token, 
@@ -67,6 +110,41 @@ async function deserializeUser(
   }
 
   return next();
-};
+}
+
+async function deserializeByHybird(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  // 1. get access token from header and get refresh token from cookie
+  const accessToken = get(req, 'headers.authorization', '').replace(/^Bearer\s/, '');
+  const refreshToken = get(req, 'cookies.refreshToken');
+
+  // 2. if accessToken not exist, return
+  if (!accessToken) {
+    return next();
+  }
+
+  // 3. verify access token
+  const {decoded, expired} = verifyJwt(accessToken);
+  // verify pass
+  if (decoded) {
+    res.locals.user = decoded;
+    return next();
+  }
+  // access token expire
+  if (expired && refreshToken) {
+    const newAccessToken = await reIssueAccessToken({refreshToken});
+    if (newAccessToken) {
+      // reissue new access token
+      res.setHeader('x-access-token', newAccessToken);
+      const {decoded} = verifyJwt(newAccessToken as string);
+      res.locals.user = decoded;
+    }
+  }
+  return next();
+}
+
 
 export default deserializeUser;

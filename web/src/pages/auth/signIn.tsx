@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import { useNavigate } from "react-router-dom";
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { signInSchema, SignInType } from '../../models/signIn.model';
+import { signInSchema, SignInType } from '../../models/auth.models';
 import { signIn } from '../../services/auth.service';
 
 const SignInPage: React.FC = () => {
@@ -23,7 +23,12 @@ const SignInPage: React.FC = () => {
 
   const onSubmit = async (event: SignInType) => {
     try {
-      await signIn(event);
+      const {accessToken, refreshToken} = await signIn(event);
+      localStorage.setItem('accessToken', accessToken as string);
+      console.log({
+        accessToken,
+        refreshToken
+      });
     } catch (e) {
       console.log(e);
     }

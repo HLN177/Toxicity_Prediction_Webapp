@@ -39,22 +39,22 @@ async function createUserSessionHandler(
     { expiresIn: config.get('refreshTokenTtl') } // 1 year
   );
 
-  res.cookie('accessToken', accessToken, {
-    maxAge: 900000, // 15min
-    /**
-     * httpOnly
-     * this cookie can only be accessed via http, and cannot access this via Javascript 
-     * this is a good security feature that you get with cookies and don't get with local storage
-     */
-    httpOnly: true,
-    domain: 'localhost', // set this in config in production
-    path: '/', //	Path for the cookie
-    sameSite: 'strict',
-    secure: false // Marks the cookie to be used with HTTPS only.
-  });
+  // res.cookie('accessToken', accessToken, {
+  //   maxAge: 900000, // 15min
+  //   /**
+  //    * httpOnly
+  //    * this cookie can only be accessed via http, and cannot access this via Javascript 
+  //    * this is a good security feature that you get with cookies and don't get with local storage
+  //    */
+  //   httpOnly: true,
+  //   domain: 'localhost', // set this in config in production
+  //   path: '/', //	Path for the cookie
+  //   sameSite: 'strict',
+  //   secure: false // Marks the cookie to be used with HTTPS only.
+  // });
 
   res.cookie('refreshToken', refreshToken, {
-    maxAge: 3.154e10, // 1 year
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     httpOnly: true,
     domain: 'localhost', // set this in config in production
     path: '/', //	Path for the cookie

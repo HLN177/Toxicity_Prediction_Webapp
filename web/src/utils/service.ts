@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, {AxiosRequestConfig} from "axios";
 import { notification } from 'antd';
 
 const service = axios.create({
@@ -7,9 +7,19 @@ const service = axios.create({
   withCredentials: true
 });
 
+service.interceptors.request.use(
+  (config: AxiosRequestConfig) => {
+    config.headers = {
+      ...config.headers,
+      authorization: `Bearer ${localStorage.getItem('accessToken')}`
+    };
+    return config;
+  }
+);
+
 service.interceptors.response.use(
   res => {
-    return res;
+    return res.data;
   },
   err => {
     const {message, response} = err;

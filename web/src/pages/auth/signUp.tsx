@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import { useNavigate } from "react-router-dom";
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SignUpType, signUpSchema } from '../../models/signUp.model';
+import { SignUpType, signUpSchema } from '../../models/auth.models';
 import { signUp } from '../../services/auth.service';
 
 const SignUpPage: React.FC = () => {
