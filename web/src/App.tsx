@@ -11,7 +11,7 @@ const App: React.FC = () => {
   return (
     <div className="App">
       <Routes>
-        <Route path='/' element={<Navigate to='/login' />} />
+        <Route path='/' element={<Navigate to='/signin' />} />
         <Route path='signin' element={<SignInPage />} ></Route>
         <Route path='signup' element={<SignUpPage />}/>
         <Route path='dashboard' element={<DashboardPage />} >

@@ -6,24 +6,33 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useNavigate } from "react-router-dom";
-
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { SignUpType, signUpSchema } from '../../models/signUp.model';
+import { signUp } from '../../services/auth.service';
 
 const SignUpPage: React.FC = () => {
   const navigate = useNavigate();
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+  const {
+    register,
+    handleSubmit,
+    formState: {errors}
+  } = useForm<SignUpType>({
+    resolver: zodResolver(signUpSchema)
+  });
+  
+  const onSubmit = async (data: SignUpType) => {
+    try {
+      await signUp(data);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
     <Container component="main" maxWidth="xs">
       <Box
         sx={{
-          marginTop: 8,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -34,28 +43,58 @@ const SignUpPage: React.FC = () => {
         </Typography>
         <Box
           component="form"
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onSubmit)}
           noValidate
           sx={{ mt: 1 }}
         >
           <Box mb={2}>
             <TextField
+              autoFocus
+              required
+              fullWidth
+              margin="normal"
+              id="name"
+              label="Name"
+              variant="outlined"
+              error={!!errors?.name}
+              helperText={errors?.name ? errors.name.message : null}
+              {...register('name')}
+            />
+            <TextField
+              required
+              fullWidth
+              margin="normal"
               id="email"
               label="Email"
               variant="outlined"
               autoComplete='email'
-              autoFocus
-              fullWidth
+              error={!!errors?.email}
+              helperText={errors?.email ? errors.email.message : null}
+              {...register('email')}
             />
             <TextField
-              margin="normal"
               required
               fullWidth
-              name="password"
+              margin="normal"
               label="Password"
               type="password"
               id="password"
               autoComplete="current-password"
+              error={!!errors?.password}
+              helperText={errors?.password ? errors.password.message : null}
+              {...register('password')}
+            />
+            <TextField
+              required
+              fullWidth
+              margin="normal"
+              label="Confirm Password"
+              type="password"
+              id="passwordComfirm"
+              autoComplete="current-password"
+              error={!!errors?.passwordConfirmation}
+              helperText={errors?.passwordConfirmation ? errors.passwordConfirmation.message : null}
+              {...register('passwordConfirmation')}
             />
           </Box>
           <Stack
