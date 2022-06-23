@@ -1,8 +1,8 @@
-import axios, {AxiosRequestConfig} from "axios";
+import axios, {AxiosRequestConfig, AxiosResponse} from "axios";
 import { notification } from 'antd';
 
 const service = axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: '/',
   timeout: 100000,
   withCredentials: true
 });
@@ -18,7 +18,11 @@ service.interceptors.request.use(
 );
 
 service.interceptors.response.use(
-  res => {
+  (res: AxiosResponse) => {
+    if (res.headers['x-access-token']) {
+      const newAccessToken = res.headers['x-access-token'];
+      localStorage.setItem('accessToken', newAccessToken);
+    }
     return res.data;
   },
   err => {
