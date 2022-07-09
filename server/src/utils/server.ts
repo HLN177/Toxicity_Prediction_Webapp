@@ -11,7 +11,8 @@ function createServer() {
 
   app.use(cors({
     origin: config.get('origin'), // tell browser to accept request from this endpoint
-    credentials: true // tell the browser to expect the credentials of header
+    credentials: true, // tell the browser to expect the credentials of header
+    exposedHeaders: ['x-access-token'] // tell the browser which response headers could be read by scripts
   }));
 
   // express need cookie parse if you use cookie
@@ -23,7 +24,7 @@ function createServer() {
   // use this middleware to get user info
   // this middleware will be called on every endpoint for every request
   app.use(deserializeUser);// validate use
-  
+
   routes(app);
 
   return app;
