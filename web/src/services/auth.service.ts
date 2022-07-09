@@ -3,7 +3,8 @@ import service from '../utils/service';
 
 const URL = {
   SESSION: '/api/sessions',
-  USERS: '/api/users'
+  USERS: '/api/users',
+  ME: '/api/me'
 };
 
 function signIn(data: SignInType): Promise<TokenResponse> {
@@ -14,7 +15,12 @@ function signUp(data: SignUpType) {
   return service.post(URL.USERS, data);
 }
 
+function checkAuth() {
+  return service.get(URL.ME);
+}
+
 export {
   signIn,
-  signUp
+  signUp,
+  checkAuth
 };

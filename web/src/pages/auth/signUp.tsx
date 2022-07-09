@@ -9,9 +9,12 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SignUpType, signUpSchema } from '../../models/auth.models';
-import { signUp } from '../../services/auth.service';
+import { signUp, checkAuth } from '../../services/auth.service';
+import { useAppSelector } from '../../store/hook';
+import { selectCount } from '../../store/counter/counterSlice';
 
 const SignUpPage: React.FC = () => {
+  const count = useAppSelector(selectCount);
   const navigate = useNavigate();
   const {
     register,
@@ -29,6 +32,15 @@ const SignUpPage: React.FC = () => {
     }
   };
 
+  const handleCheckAuth = async () => {
+    window.location.href = '/signin';
+    // try {
+    //   await checkAuth();
+    // } catch (e) {
+    //   console.log(e);
+    // }
+  };
+
   return (
     <Container component="main" maxWidth="xs">
       <Box
@@ -41,6 +53,7 @@ const SignUpPage: React.FC = () => {
         <Typography component="h1" variant="h5">
           Sign Up
         </Typography>
+        {count}
         <Box
           component="form"
           onSubmit={handleSubmit(onSubmit)}
@@ -117,6 +130,13 @@ const SignUpPage: React.FC = () => {
               }}
             >
               Back
+            </Button>
+            <Button
+              variant="contained"
+              size="large"
+              onClick={handleCheckAuth}
+            >
+              test
             </Button>
           </Stack>
         </Box>
