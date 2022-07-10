@@ -12,6 +12,9 @@ function requireUser(req: Request, res: Response, next: NextFunction) {
   const user = res.locals.user;
 
   if (!user) {
+    res.clearCookie('refreshToken', {
+      path: '/', //	Path for the cookie
+    });
     return res.sendStatus(403);
   }
 

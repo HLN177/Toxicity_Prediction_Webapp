@@ -96,6 +96,10 @@ async function deleteUserSessionHandler(
   };
   await updateSession(query, update);
 
+  res.clearCookie('refreshToken', {
+    path: '/', //	Path for the cookie
+  });
+
   return res.send({
     accessToken: null,
     refreshToken: null
