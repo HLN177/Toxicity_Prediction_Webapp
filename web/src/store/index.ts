@@ -1,10 +1,15 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import counterReducer from './counter/counterSlice';
+import predictionReducer from './prediction/predictionReducer';
 
 const store = configureStore({
   reducer: {
-    counter: counterReducer
-  }
+    counter: counterReducer,
+    prediction: predictionReducer
+  },
+  middleware: getDefaultMiddleware({
+    serializableCheck: false,
+  })
 });
 
 export default store;
