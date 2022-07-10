@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SignUpType, signUpSchema } from '../../models/auth.models';
-import { signUp, checkAuth } from '../../services/auth.service';
+import { signUp } from '../../services/auth.service';
 // import { useAppSelector } from '../../store/hook';
 // import { selectCount } from '../../store/counter/counterSlice';
 
