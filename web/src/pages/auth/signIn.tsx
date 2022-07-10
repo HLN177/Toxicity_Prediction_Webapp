@@ -9,13 +9,13 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signInSchema, SignInType } from '../../models/auth.models';
-import { signIn, checkAuth } from '../../services/auth.service';
-import { useAppSelector, useAppDispatch } from '../../store/hook';
-import { decrement, increment } from '../../store/counter/counterSlice';
+import { signIn } from '../../services/auth.service';
+// import { useAppSelector, useAppDispatch } from '../../store/hook';
+// import { decrement, increment } from '../../store/counter/counterSlice';
 
 const SignInPage: React.FC = () => {
-  const count = useAppSelector((state) => state.counter.value);
-  const dispatch = useAppDispatch();
+  // const count = useAppSelector((state) => state.counter.value);
+  // const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const {
     register,
@@ -33,9 +33,14 @@ const SignInPage: React.FC = () => {
         accessToken,
         refreshToken
       });
+      navigateToDashboard();
     } catch (e) {
       console.log(e);
     }
+  };
+
+  const navigateToDashboard = () => {
+    navigate('/dashboard');
   };
 
   return (
@@ -50,14 +55,14 @@ const SignInPage: React.FC = () => {
         <Typography component="h1" variant="h5">
           Sign In
         </Typography>
-        {count}
-        <Button
+        {/* {count} */}
+        {/* <Button
           variant="outlined"
           size="large"
           onClick={() => dispatch(increment())}
         >
           add
-        </Button>
+        </Button> */}
         <Box
           component="form"
           onSubmit={handleSubmit(onSubmit)}

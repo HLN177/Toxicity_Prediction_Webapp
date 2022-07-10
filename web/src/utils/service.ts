@@ -1,5 +1,6 @@
 import axios, {AxiosRequestConfig, AxiosResponse} from "axios";
 import { notification } from 'antd';
+import history from "../services/history";
 
 const service = axios.create({
   baseURL: '/',
@@ -31,6 +32,10 @@ service.interceptors.response.use(
       message: message,
       description: response.data
     });
+    if (response.status === 403) {
+      localStorage.removeItem('accessToken');
+      history.replace('/');
+    }
     return Promise.reject(err);
   }
 );

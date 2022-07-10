@@ -19,8 +19,13 @@ function checkAuth() {
   return service.get(URL.ME);
 }
 
+function signOut() {
+  return service.delete(URL.SESSION);
+}
+
 export {
   signIn,
   signUp,
-  checkAuth
+  checkAuth,
+  signOut
 };

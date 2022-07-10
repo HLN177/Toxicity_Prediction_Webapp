@@ -10,11 +10,11 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SignUpType, signUpSchema } from '../../models/auth.models';
 import { signUp, checkAuth } from '../../services/auth.service';
-import { useAppSelector } from '../../store/hook';
-import { selectCount } from '../../store/counter/counterSlice';
+// import { useAppSelector } from '../../store/hook';
+// import { selectCount } from '../../store/counter/counterSlice';
 
 const SignUpPage: React.FC = () => {
-  const count = useAppSelector(selectCount);
+  // const count = useAppSelector(selectCount);
   const navigate = useNavigate();
   const {
     register,
@@ -27,18 +27,14 @@ const SignUpPage: React.FC = () => {
   const onSubmit = async (data: SignUpType) => {
     try {
       await signUp(data);
+      navigateToSignIn();
     } catch (err) {
       console.log(err);
     }
   };
 
-  const handleCheckAuth = async () => {
-    window.location.href = '/signin';
-    // try {
-    //   await checkAuth();
-    // } catch (e) {
-    //   console.log(e);
-    // }
+  const navigateToSignIn = () => {
+    navigate('/signin');
   };
 
   return (
@@ -53,7 +49,7 @@ const SignUpPage: React.FC = () => {
         <Typography component="h1" variant="h5">
           Sign Up
         </Typography>
-        {count}
+        {/* {count} */}
         <Box
           component="form"
           onSubmit={handleSubmit(onSubmit)}
@@ -125,18 +121,9 @@ const SignUpPage: React.FC = () => {
             <Button
               variant="outlined"
               size="large"
-              onClick={() => {
-                navigate('/signin');
-              }}
+              onClick={navigateToSignIn}
             >
               Back
-            </Button>
-            <Button
-              variant="contained"
-              size="large"
-              onClick={handleCheckAuth}
-            >
-              test
             </Button>
           </Stack>
         </Box>
