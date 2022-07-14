@@ -5,22 +5,32 @@ import type { RootState } from '../index';
 // Define a type for the slice state
 interface PredictionState {
   currentStep: number,
-  sourceImgData: Blob | null,
+  sourceImg: Blob | null,
+  sourceImgData: SourceImgInput
   newImgData: string,
   smileData: string,
-  predictionResult: Array<prediction>
+  predictionResult: Array<Prediction>
 }
 
-type prediction = {
+interface Prediction {
   name: string,
   result: boolean,
   runtime: string
 }
 
+interface SourceImgInput {
+  fileName: string,
+  fileData: string
+}
+
 // Define the initial state using that type
 const initialState: PredictionState = {
   currentStep: 0,
-  sourceImgData: null,
+  sourceImg: null,
+  sourceImgData: {
+    fileName: '',
+    fileData: ''
+  },
   newImgData: '',
   smileData: '',
   predictionResult: []
@@ -33,7 +43,10 @@ export const predictionSlice = createSlice({
     updateCurrentStep: (state, action: PayloadAction<number>) => {
       state.currentStep = action.payload;
     },
-    updateSourceImgData: (state, action: PayloadAction<Blob | null>) => {
+    updateSourceImg: (state, action: PayloadAction<Blob | null>) => {
+      state.sourceImg = action.payload;
+    },
+    updateSourceImgData: (state, action: PayloadAction<SourceImgInput>) => {
       state.sourceImgData = action.payload;
     },
     updateNewImgData: (state, action: PayloadAction<string>) => {
@@ -42,7 +55,7 @@ export const predictionSlice = createSlice({
     updateSmileData: (state, action: PayloadAction<string>) => {
       state.smileData = action.payload;
     },
-    updatePredictionResult: (state, action: PayloadAction<Array<prediction>>) => {
+    updatePredictionResult: (state, action: PayloadAction<Array<Prediction>>) => {
       state.predictionResult = action.payload;
     }
   },
@@ -51,6 +64,7 @@ export const predictionSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const {
   updateCurrentStep,
+  updateSourceImg,
   updateSourceImgData,
   updateNewImgData,
   updateSmileData,
@@ -59,6 +73,7 @@ export const {
 
 // Other code such as selectors can use the imported `RootState` type
 const selectCurrentStep =  (state: RootState) => state.prediction.currentStep;
+const selectSourceImg = (state: RootState) => state.prediction.sourceImg;
 const selectSourceImgData = (state: RootState) => state.prediction.sourceImgData;
 const selectNewImgData = (state: RootState) => state.prediction.newImgData;
 const selectSmileData = (state: RootState) => state.prediction.smileData;
@@ -66,6 +81,7 @@ const selectPredictionResult = (state: RootState) => state.prediction.prediction
 
 export {
   selectCurrentStep,
+  selectSourceImg,
   selectSourceImgData,
   selectNewImgData,
   selectSmileData,

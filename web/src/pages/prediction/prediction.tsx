@@ -12,26 +12,21 @@ import PredictPage from './predictPage';
 import { useAppSelector, useAppDispatch } from '../../store/hook';
 import {
   selectCurrentStep,
+  selectSourceImg,
   selectSourceImgData,
-  selectNewImgData,
-  selectSmileData,
-  selectPredictionResult,
   updateCurrentStep,
-  updateSourceImgData,
-  updateNewImgData,
-  updateSmileData,
-  updatePredictionResult,
 } from '../../store/prediction/predictionReducer';
 
 function PredictionPage() {
   const currentStep = useAppSelector(selectCurrentStep);
+  const sourceImg = useAppSelector(selectSourceImg);
   const sourceImgData = useAppSelector(selectSourceImgData);
   const dispatch = useAppDispatch();
   const [enableNext, setEnableNext] = useState(false);
 
   useEffect(() => {
     validateSteps();
-  }, [currentStep, sourceImgData]);
+  }, [currentStep, sourceImg, sourceImgData]);
 
   const handleNext = () => {
     dispatch(updateCurrentStep(currentStep + 1));
@@ -63,7 +58,7 @@ function PredictionPage() {
     let isValid = false;
     switch (currentStep) {
       case STEPS_ENUM.SELECT_SOURCE:
-        sourceImgData && (isValid = true);
+        sourceImg && sourceImgData.fileData && sourceImgData.fileName && (isValid = true);
         break;
       case STEPS_ENUM.GENERATE_SMILE:
       case STEPS_ENUM.VALIDATE_SMILE:

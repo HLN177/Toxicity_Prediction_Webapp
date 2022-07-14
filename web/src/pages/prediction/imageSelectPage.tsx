@@ -5,31 +5,39 @@ import Button from '@mui/material/Button';
 import { useAppSelector, useAppDispatch } from '../../store/hook';
 import nullpng from '../../assets/nullpng.png';
 import {
-  selectSourceImgData,
-  updateSourceImgData,
+  selectSourceImg,
+  updateSourceImg,
+  updateSourceImgData
 } from '../../store/prediction/predictionReducer';
-
+import { getImageBase64URL } from '../../utils/utils';
 
 const Input = styled('input')({
   display: 'none',
 });
 
 const ImageSelectPage = () => {
-  const sourceImgData = useAppSelector(selectSourceImgData);
-  const [sourceImg, setSourceImg] = useState('');
+  const sourceImg = useAppSelector(selectSourceImg);
+  const [sourceImgSrc, setSourceImgSrc] = useState('');
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    setSourceImg(sourceImgData ? URL.createObjectURL(sourceImgData) : '');
-  }, [sourceImgData]);
+    setSourceImgSrc(sourceImg ? URL.createObjectURL(sourceImg) : '');
+  }, [sourceImg]);
 
-  const handleSelect = (e: any) => {
+  const handleSelect = async (e: any) => {
     let file = e.target.files[0];
-    dispatch(updateSourceImgData(file));
+    dispatch(updateSourceImg(file));
+    const baseURL = await getImageBase64URL(file);
+    if (baseURL) {
+      dispatch(updateSourceImgData({
+        fileName: file.name,
+        fileData: baseURL
+      }));
+    }
   };
 
   const handleDelete = () => {
-    dispatch(updateSourceImgData(null));
+    dispatch(updateSourceImg(null));
   };
 
   return (
@@ -50,7 +58,7 @@ const ImageSelectPage = () => {
         }}
       >
         <img
-          src={sourceImg || nullpng}
+          src={sourceImgSrc || nullpng}
           alt="SourceImg"
           width="200"
           height="200"
