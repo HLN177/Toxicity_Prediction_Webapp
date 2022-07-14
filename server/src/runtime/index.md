@@ -1,1 +1,1 @@
-folder for runtime processing
+Runtime directory for store image and molfile temporarily
