@@ -2,10 +2,10 @@ import {object, string, number, TypeOf} from 'zod';
 
 const generateSmilePayload = {
   body: object({
-    imageName: string({
+    ImgName: string({
       required_error: "File Name is required"
     }),
-    imageData: string({
+    ImgData: string({
       required_error: "File Data is required"
     })
   })

@@ -30,15 +30,21 @@ async function generateSmileFileHandler(
   res: Response
 ) {
   try {
+    // get userId
     const userId = res.locals.user._id;
-    const {imageName, imageData} = req.body;
+    // request parsing
+    const {
+      ImgName: imgName,
+      ImgData: imgData
+    } = req.body;
+    // generate file path
     const {
       EXTENSION,
       IMAGO_CONSOLE_PATH,
       SOURCE_IMG_PATH,
       MOL_FILE_PATH,
       MOL_TO_SMILE_PY_PATH
-    } = generatePath(imageName, userId);
+    } = generatePath(imgName, userId);
 
     // step1: validate img file type
     if(!validateImgFileType(EXTENSION)) {
@@ -46,7 +52,7 @@ async function generateSmileFileHandler(
     }
 
     //step2: save source img
-    await saveSourceImg(imageData, SOURCE_IMG_PATH);
+    await saveSourceImg(imgData, SOURCE_IMG_PATH);
 
     //step3: transfer img to mol file using imago_console
     imgToMol(IMAGO_CONSOLE_PATH, SOURCE_IMG_PATH, MOL_FILE_PATH);
