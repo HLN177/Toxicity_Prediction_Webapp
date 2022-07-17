@@ -2,6 +2,7 @@
 node_modules
 /dist
 TestNote.md
+/server/src/runtime
 
 # local env files
 .env.local

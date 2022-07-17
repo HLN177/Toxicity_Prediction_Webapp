@@ -15,7 +15,7 @@ function requireUser(req: Request, res: Response, next: NextFunction) {
     res.clearCookie('refreshToken', {
       path: '/', //	Path for the cookie
     });
-    return res.sendStatus(403);
+    return res.sendStatus(401);
   }
 
   return next();

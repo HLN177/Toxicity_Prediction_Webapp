@@ -7,6 +7,8 @@ import { createUserSessionHandler, deleteUserSessionHandler, getUserSessionsHand
 import { createSessionSchema } from '../schema/session.schema';
 import { createProductHandler, deleteProductHandler, getProductHandler, updateProductHandler } from '../controller/product.controller';
 import { createProductSchema, deleteProductSchema, getProductSchema, updateProductSchema } from '../schema/product.schema';
+import { generateSmileSchema } from '../schema/prediction.schema';
+import { generateSmileFileHandler } from '../controller/prediction.controller';
 
 /**
  * taking http request and forward to controller
@@ -32,6 +34,8 @@ function routes(app: Express) {
   .get([validate(getProductSchema)], getProductHandler)
   .put([requireUser, validate(updateProductSchema), updateProductHandler])
   .delete([requireUser, validate(deleteProductSchema)], deleteProductHandler);
+
+  app.post('/api/generatesmile', [requireUser, validate(generateSmileSchema)], generateSmileFileHandler);
 }
 
 export default routes;
